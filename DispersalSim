@@ -1,0 +1,53 @@
+###Dispersal Simulation Code###
+
+library(raster)
+
+## General function to take in a lattice and disperse
+## according to a user provided dispersal kernel
+## Author: Corey Chivers
+lat_disp<-function(pop,kernel,...)
+{
+  lattice_size<-dim(pop)
+  new_pop<-array(0,dim=lattice_size)
+  for(i in 1:lattice_size[1]){
+    for(j in 1:lattice_size[2]){
+      N<-pop[i,j]
+      dist<-kernel(N,...)
+      theta<-runif(N,0,2*pi)
+      x<-cos(theta)*dist
+      y<-sin(theta)*dist
+      for(k in 1:N){
+        x_ind<-(round(i+x[k])-1) %% lattice_size[1] + 1
+        y_ind<-(round(j+y[k])-1) %% lattice_size[2] + 1
+        new_pop[x_ind,y_ind]<-new_pop[x_ind,y_ind]+1
+        }
+      }
+    }
+  return(new_pop)
+}
+
+#Creating starting populations
+
+Time=1
+pop <- array(0,dim=c(Time,100,100))
+pop[1,50,50]<-5000
+pop2 <- array(0,dim=c(Time,100,100))
+pop2[1,50,50] <- 20000
+pop3<-array(0,dim=c(Time,100,100))
+pop3[1,50,50]<-50000
+
+#Simulating dispersal data into a raster
+d=lat_disp(pop[1,,],kernel=rlnorm,meanlog=0,sdlog=1)
+dras=raster(d)
+draslog=log(dras)
+
+#Plotting sigle step dispersal
+colors<-(c('gray','navyblue','deepskyblue'))
+cus_col<-colorRampPalette(colors=colors, bias=1, space = "Lab",interpolate = c("linear", "spline"))
+plot(dras,col=cus_col(300),breaks=seq(0,2500,length.out=301),axis.args=list(at=seq(0,2500,length.out=11),labels=seq(0,2500,length.out=11)),zlim=c(0,2500))
+
+brks=seq(0,log(5000),length.out=100)
+plot(draslog,col=cus_col(99),
+breaks=brks,
+axis.args=list(at=log(c(2,7,25,100,350,1000,2500,5000)),labels=c(2,7,25,100,350,1000,2500,5000)),
+zlim=c(0,log(5000)))
