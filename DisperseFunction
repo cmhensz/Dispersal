@@ -16,6 +16,8 @@
 #NOTE: angles are asumed to be in radians (for type = 'flat') or alternatively in bearing degrees (for type = 'curved')
 #NOTE: distances (for type = 'curved') are assumed to be in meters
 
+##Function##
+
 disperse=function(type = c('flat', 'curved'), start, npoints, angle, angleargs = list(), kernel, kernelargs = list()){
 	if(type == 'flat'){
 		theta <- do.call(angle, c(npoints, angleargs))
