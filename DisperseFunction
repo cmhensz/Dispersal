@@ -1,5 +1,5 @@
 ##Author: Chris Hensz##
-##Date: Sept 19, 2017##
+##Date: Dec 07, 2017##
 
 ##Description##
 #This function generates a matrix of coordinates of random dispersal events from a point source (start)
@@ -22,8 +22,8 @@ disperse=function(type = c('flat', 'curved'), start, npoints, angle, angleargs =
 	if(type == 'flat'){
 		theta <- do.call(angle, c(npoints, angleargs))
 		dist <- do.call(kernel, c(npoints, kernelargs))
-		x <- dist*cos(theta)
-		y <- dist*sin(theta)
+		x <- start[1] + dist*cos(theta)
+		y <- start[2] + dist*sin(theta)
 		result <- cbind('X' = x, 'Y' = y)
 		warning('angle is assumed to be in radians')
 	}
